@@ -1,0 +1,67 @@
+import random
+from words import words
+import string
+
+name = input("What is your name?: ")
+
+while True:
+    player_intro = input(f"Would you like to take a guess at what word I am thinking of, {name}? (Yes to play, Q to quit):  ").lower()
+    if player_intro == "q":
+        quit()
+    elif player_intro == "Yes".lower():
+       break
+
+    else:
+        print("I don't understand that, please try again.")
+
+def get_valid_word(words):
+    word = random.choice(words)
+    while '-' in word or ' ' in word:
+        word = random.choice(words)
+
+    return word.upper()
+
+
+def word_wheel():
+    word = get_valid_word(words)
+    alphabet = set(string.ascii_uppercase)
+    word_digits = set(word)
+    used_letters = set()
+
+    lives = 7
+
+    while len(word_digits) > 0 and lives > 0:
+            # letters used
+            # ' '.join(['a' , 'b', 'cd']) --> 'a b cd'
+        print(f"You have {lives} left and you have used these letters: ", " ".join(used_letters))
+
+        # what current word is (ie W-R D)
+        word_list = (letter if letter in used_letters else "-" for letter in word)
+        print("Current word: ", " ".join(word_list))
+
+        player_letter = input("Guess a letter: ").upper()
+        if player_letter in alphabet - used_letters:
+            used_letters.add(player_letter)
+            if player_letter in word_digits:
+                word_digits.remove(player_letter)
+
+            else:
+                lives = lives - 1
+                print("That letter is not in this word.")
+
+        elif player_letter in used_letters:
+            print("You have already used that character. Please pick another.")
+
+        else:
+            print("Invalid character. Try again!")
+
+    if lives == 0:
+        print(f"You have no more lives, you've lost, I was thinking of the word, {word}.")
+    else:
+        print(f"You've guessed it!, I was thinking of the word, {word}.!")
+
+    print(f"Thank you for playing, {name}!")
+
+
+if __name__ == '__main__':
+    word_wheel()
